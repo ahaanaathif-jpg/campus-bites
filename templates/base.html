@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f3e9">
+  <title>{% block title %}Campus Bites{% endblock %} · Campus Bites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('home') }}" aria-label="Campus Bites home"><span class="brand-mark">cb</span><span>campus<span class="brand-light">bites</span></span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Menu</a>
+      <a href="{{ url_for('order_history') }}" class="{% if request.endpoint == 'order_history' %}active{% endif %}">My orders</a>
+      <a href="{{ url_for('admin') }}" class="{% if request.endpoint == 'admin' %}active{% endif %}">Admin</a>
+    </nav>
+    <a class="header-cart" href="{{ url_for('cart') }}" aria-label="View cart"><span class="cart-icon">▱</span><span>Cart</span><span class="cart-count" id="cart-count">0</span></a>
+  </header>
+  <main>{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}{% block content %}{% endblock %}</main>
+  <footer class="site-footer"><span>Campus Bites <span class="footer-dot">·</span> made for the in-between</span><span>Demo ordering only · pay at pickup</span></footer>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

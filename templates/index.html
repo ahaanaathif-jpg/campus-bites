@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Good food, no queue{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><span class="eyebrow"><span class="live-dot"></span> YOUR CAMPUS, SERVED</span><h1>Good food.<br><em>No queue.</em></h1><p>Order ahead, make it to class on time. Your favourite canteen picks, ready when you are.</p><a class="button button-dark" href="#menu">Explore today's menu <span aria-hidden="true">↘</span></a><div class="hero-note"><span class="note-icon">◷</span><span><strong>Made fresh</strong><br>Pick a time. We'll handle the rest.</span></div></div>
+  <div class="hero-visual"><img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=90" alt="A colourful fresh lunch bowl"><div class="visual-tag"><span class="tag-star">✳</span><span>Lunch break,<br><strong>sorted.</strong></span></div><div class="visual-caption">FRESH FROM YOUR CAMPUS KITCHEN</div></div>
+  <div class="hero-index">01 <span></span> 08</div>
+</section>
+<section class="menu-section" id="menu">
+  <div class="section-heading"><div><span class="eyebrow">THE GOOD STUFF</span><h2>On the menu<span class="heading-period">.</span></h2></div><p>Freshly made, fairly priced, and<br>ready for your next study break.</p></div>
+  <div class="menu-toolbar"><div class="category-tabs" role="group" aria-label="Filter by category"><button class="category-tab selected" type="button" data-category="all">Everything</button>{% for category in categories %}<button class="category-tab" type="button" data-category="{{ category.Category_ID }}">{{ category.Category_Name }}</button>{% endfor %}</div><label class="search-box"><span aria-hidden="true">⌕</span><input id="menu-search" type="search" placeholder="Find something tasty" aria-label="Search menu"></label></div>
+  <div class="food-grid" id="food-grid">
+    {% for food in foods %}
+    <article class="food-card" data-name="{{ food.Food_Name|lower }}" data-category="{{ food.Category_ID }}">
+      <div class="food-photo"><img src="{{ images.get(food.Food_Name, 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=85') }}" alt="{{ food.Food_Name }}" loading="lazy"><span class="food-category">{{ food.Category_Name }}</span>{% if not food.Availability %}<span class="sold-out">Sold out</span>{% endif %}</div>
+      <div class="food-info"><div><h3>{{ food.Food_Name }}</h3><span class="availability {% if food.Availability %}available{% else %}unavailable{% endif %}">{% if food.Availability %}● Available now{% else %}● Not available{% endif %}</span></div><strong class="food-price">₹{{ '%.0f'|format(food.Price) }}</strong></div>
+      <button class="add-button" type="button" data-add="{{ food.Food_ID }}" data-name="{{ food.Food_Name }}" data-price="{{ food.Price }}" {% if not food.Availability %}disabled{% endif %}><span>+</span> Add to order</button>
+    </article>
+    {% endfor %}
+  </div>
+  <p class="empty-state" id="menu-empty" hidden>No dishes match that search. Try another name or category.</p>
+</section>
+<section class="pickup-strip"><div class="pickup-symbol">◷</div><div><span class="eyebrow">YOUR BREAK, YOUR TIME</span><h2>Skip the line, not lunch.</h2></div><p>Choose a pickup time at checkout.<br>We'll have it waiting.</p><a href="{{ url_for('cart') }}" class="text-link">View your order <span>→</span></a></section>
+{% endblock %}

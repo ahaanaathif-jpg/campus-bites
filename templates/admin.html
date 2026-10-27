@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Canteen admin{% endblock %}
+{% block content %}
+<section class="page-shell admin-shell">
+	<div class="page-title admin-title"><span class="eyebrow">CANTEEN CONTROL ROOM</span><h1>Admin desk<span class="heading-period">.</span></h1><p>Keep the menu current and the orders moving.</p></div>
+	<div class="admin-section">
+		<div class="admin-section-head"><div><span class="eyebrow">MENU MANAGEMENT</span><h2>Food items</h2></div><span class="admin-count">{{ foods|length }} items</span></div>
+		<form class="add-food-form" action="{{ url_for('add_food') }}" method="post">
+			<label class="field-label">Food name<input name="food_name" maxlength="80" required placeholder="New menu item"></label>
+			<label class="field-label">Price (₹)<input name="price" type="number" min="0" max="10000" step="0.01" required placeholder="0.00"></label>
+			<label class="field-label">Category<select name="category_id" required>{% for category in categories %}<option value="{{ category.Category_ID }}">{{ category.Category_Name }}</option>{% endfor %}</select></label>
+			<button class="button button-dark" type="submit">+ Add item</button>
+		</form>
+		<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Availability</th><th></th></tr></thead><tbody>
+			{% for food in foods %}
+			<tr>
+				<td><form id="food-update-{{ food.Food_ID }}" action="{{ url_for('update_food', food_id=food.Food_ID) }}" method="post"></form><strong>{{ food.Food_Name }}</strong></td>
+				<td>{{ food.Category_Name }}</td>
+				<td><label class="sr-only" for="price-{{ food.Food_ID }}">Price for {{ food.Food_Name }}</label><input form="food-update-{{ food.Food_ID }}" id="price-{{ food.Food_ID }}" class="table-input price-input" type="number" name="price" min="0" max="10000" step="0.01" value="{{ '%.2f'|format(food.Price) }}" required></td>
+				<td><label class="availability-toggle"><input form="food-update-{{ food.Food_ID }}" type="checkbox" name="availability" value="1" {% if food.Availability %}checked{% endif %}><span>{% if food.Availability %}Available{% else %}Unavailable{% endif %}</span></label></td>
+				<td><button form="food-update-{{ food.Food_ID }}" class="small-button" type="submit">Save</button></td>
+			</tr>
+			{% endfor %}
+		</tbody></table></div>
+	</div>
+	<div class="admin-section orders-section">
+		<div class="admin-section-head"><div><span class="eyebrow">LIVE QUEUE</span><h2>Recent orders</h2></div><span class="admin-count">{{ orders|length }} shown</span></div>
+		{% if orders %}
+		<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Order</th><th>Student</th><th>Pickup</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
+			{% for order in orders %}
+			<tr><td><strong>#CB-{{ '%04d'|format(order.Order_ID) }}</strong><small>{{ order.Order_Date[:10] }}</small></td><td>{{ order.Name }}<small>{{ order.Email }}</small></td><td>{{ order.Pickup_Time }}</td><td>₹{{ '%.0f'|format(order.Total_Amount) }}</td><td><span class="status-pill status-{{ order.Order_Status|lower }}">{{ order.Order_Status }}</span></td><td><form class="status-form" action="{{ url_for('update_order_status', order_id=order.Order_ID) }}" method="post"><label class="sr-only" for="status-{{ order.Order_ID }}">Status for order {{ order.Order_ID }}</label><select id="status-{{ order.Order_ID }}" name="status">{% for status in statuses %}<option value="{{ status }}" {% if status == order.Order_Status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select><button class="small-button" type="submit">Update</button></form></td></tr>
+			{% endfor %}
+		</tbody></table></div>
+		{% else %}<div class="admin-empty">No orders yet. New pre-orders will appear here.</div>{% endif %}
+	</div>
+</section>
+{% endblock %}
