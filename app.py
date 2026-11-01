@@ -14,19 +14,15 @@ app.config["DATABASE"] = os.environ.get("CAMPUS_BITES_DB", str(BASE_DIR / "insta
 PICKUP_TIMES = ["10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM"]
 ORDER_STATUSES = ["Pending", "Preparing", "Ready", "Completed", "Cancelled"]
 FOOD_IMAGES = {
-    "Veg Sandwich": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80",
-    "Chicken Sandwich": "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?auto=format&fit=crop&w=800&q=80",
-    "Cheese Toast": "https://images.unsplash.com/photo-1505253716362-afaea1a3d3af?auto=format&fit=crop&w=800&q=80",
-    "Masala Dosa": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80",
-    "Idli Sambar": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80",
-    "Mini Tiffin Combo": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
-    "Cold Coffee": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80",
-    "Mango Shake": "https://images.unsplash.com/photo-1577805947697-89e18249e767?auto=format&fit=crop&w=800&q=80",
-    "Fresh Lime Soda": "https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80",
-    "French Fries": "https://images.unsplash.com/photo-1576101671253-6c3d6bdf2879?auto=format&fit=crop&w=800&q=80",
-    "Nachos": "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=800&q=80",
-    "Chocolate Brownie": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
-    "Gulab Jamun": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+    "Chicken Biriyani": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80",
+    "Egg Biriyani": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80",
+    "Meals": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
+    "Samosa": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+    "Chicken Roll": "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80",
+    "Coffee": "https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=800&q=80",
+    "Tea": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=800&q=80",
+    "Watermelon Juice": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=800&q=80",
+    "Lime Juice": "https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80",
 }
 
 
@@ -94,34 +90,38 @@ def init_db():
         );
         """
     )
-    category_count = connection.execute("SELECT COUNT(*) FROM CATEGORY").fetchone()[0]
-    if category_count == 0:
-        categories = [
-            ("All-day bites", "Quick, filling favourites for any time."),
-            ("South Indian", "Fresh from the tawa, made to order."),
-            ("Drinks", "A little refresh between lectures."),
-            ("Snacks & sweets", "Delicious treats to satisfy your cravings.")
-        ]
-        connection.executemany("INSERT INTO CATEGORY (Category_Name, Description) VALUES (?, ?)", categories)
+
+    custom_categories = [
+        ("South Indian", "Fresh and spicy favourites from the kitchen."),
+        ("Snacks", "Quick bites for your breaks."),
+        ("Drinks", "Cool and refreshing beverages."),
+    ]
+    existing_categories = connection.execute("SELECT Category_Name FROM CATEGORY").fetchall()
+    existing_names = {row["Category_Name"] for row in existing_categories}
+
+    if len(existing_names) != len(custom_categories) or any(name not in existing_names for name, _ in custom_categories):
+        connection.execute("DELETE FROM PAYMENT")
+        connection.execute("DELETE FROM ORDER_ITEM")
+        connection.execute("DELETE FROM ORDERS")
+        connection.execute("DELETE FROM FOOD_ITEM")
+        connection.execute("DELETE FROM CATEGORY")
+        connection.executemany("INSERT INTO CATEGORY (Category_Name, Description) VALUES (?, ?)", custom_categories)
         category_ids = {row["Category_Name"]: row["Category_ID"] for row in connection.execute("SELECT * FROM CATEGORY")}
         foods = [
-            ("Veg Sandwich", 60, 1, category_ids["All-day bites"]),
-            ("Chicken Sandwich", 80, 1, category_ids["All-day bites"]),
-            ("Cheese Toast", 70, 1, category_ids["All-day bites"]),
-            ("Masala Dosa", 45, 1, category_ids["South Indian"]),
-            ("Idli Sambar", 35, 1, category_ids["South Indian"]),
-            ("Mini Tiffin Combo", 90, 1, category_ids["South Indian"]),
-            ("Cold Coffee", 40, 1, category_ids["Drinks"]),
-            ("Mango Shake", 60, 1, category_ids["Drinks"]),
-            ("Fresh Lime Soda", 35, 1, category_ids["Drinks"]),
-            ("French Fries", 55, 1, category_ids["Snacks & sweets"]),
-            ("Nachos", 75, 1, category_ids["Snacks & sweets"]),
-            ("Chocolate Brownie", 50, 1, category_ids["Snacks & sweets"]),
-            ("Gulab Jamun", 30, 1, category_ids["Snacks & sweets"]),
+            ("Chicken Biriyani", 80, 1, category_ids["South Indian"]),
+            ("Egg Biriyani", 40, 1, category_ids["South Indian"]),
+            ("Meals", 30, 1, category_ids["South Indian"]),
+            ("Samosa", 10, 1, category_ids["Snacks"]),
+            ("Chicken Roll", 20, 1, category_ids["Snacks"]),
+            ("Coffee", 15, 1, category_ids["Drinks"]),
+            ("Tea", 10, 1, category_ids["Drinks"]),
+            ("Watermelon Juice", 25, 1, category_ids["Drinks"]),
+            ("Lime Juice", 20, 1, category_ids["Drinks"]),
         ]
         connection.executemany(
             "INSERT INTO FOOD_ITEM (Food_Name, Price, Availability, Category_ID) VALUES (?, ?, ?, ?)", foods
         )
+
     connection.commit()
     connection.close()
 
