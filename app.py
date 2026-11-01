@@ -13,16 +13,29 @@ app.config["DATABASE"] = os.environ.get("CAMPUS_BITES_DB", str(BASE_DIR / "insta
 
 PICKUP_TIMES = ["10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM"]
 ORDER_STATUSES = ["Pending", "Preparing", "Ready", "Completed", "Cancelled"]
+DEFAULT_MENU_ITEMS = [
+    ("Chicken Biriyani", 80, "South Indian"),
+    ("Egg Biriyani", 40, "South Indian"),
+    ("Meals", 30, "South Indian"),
+    ("Samosa", 10, "Snacks"),
+    ("Chicken Roll", 20, "Snacks"),
+    ("Cutlet", 10, "Snacks"),
+    ("Tea", 10, "Drinks"),
+    ("Coffee", 15, "Drinks"),
+    ("Lime Juice", 20, "Drinks"),
+    ("Watermelon Juice", 25, "Drinks"),
+]
 FOOD_IMAGES = {
     "Chicken Biriyani": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80",
     "Egg Biriyani": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80",
     "Meals": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
     "Samosa": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
     "Chicken Roll": "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80",
+    "Cutlet": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
     "Coffee": "https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=800&q=80",
     "Tea": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=800&q=80",
-    "Watermelon Juice": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=800&q=80",
     "Lime Juice": "https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80",
+    "Watermelon Juice": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=800&q=80",
 }
 
 
@@ -98,8 +111,16 @@ def init_db():
     ]
     existing_categories = connection.execute("SELECT Category_Name FROM CATEGORY").fetchall()
     existing_names = {row["Category_Name"] for row in existing_categories}
+    desired_menu_names = {name for name, _, _ in DEFAULT_MENU_ITEMS}
 
     if len(existing_names) != len(custom_categories) or any(name not in existing_names for name, _ in custom_categories):
+        do_seed = True
+    else:
+        current_foods = connection.execute("SELECT Food_Name FROM FOOD_ITEM ORDER BY Food_Name").fetchall()
+        current_names = {row["Food_Name"] for row in current_foods}
+        do_seed = current_names != desired_menu_names
+
+    if do_seed:
         connection.execute("DELETE FROM PAYMENT")
         connection.execute("DELETE FROM ORDER_ITEM")
         connection.execute("DELETE FROM ORDERS")
@@ -108,15 +129,8 @@ def init_db():
         connection.executemany("INSERT INTO CATEGORY (Category_Name, Description) VALUES (?, ?)", custom_categories)
         category_ids = {row["Category_Name"]: row["Category_ID"] for row in connection.execute("SELECT * FROM CATEGORY")}
         foods = [
-            ("Chicken Biriyani", 80, 1, category_ids["South Indian"]),
-            ("Egg Biriyani", 40, 1, category_ids["South Indian"]),
-            ("Meals", 30, 1, category_ids["South Indian"]),
-            ("Samosa", 10, 1, category_ids["Snacks"]),
-            ("Chicken Roll", 20, 1, category_ids["Snacks"]),
-            ("Coffee", 15, 1, category_ids["Drinks"]),
-            ("Tea", 10, 1, category_ids["Drinks"]),
-            ("Watermelon Juice", 25, 1, category_ids["Drinks"]),
-            ("Lime Juice", 20, 1, category_ids["Drinks"]),
+            (item_name, price, 1, category_ids[category_name])
+            for item_name, price, category_name in DEFAULT_MENU_ITEMS
         ]
         connection.executemany(
             "INSERT INTO FOOD_ITEM (Food_Name, Price, Availability, Category_ID) VALUES (?, ?, ?, ?)", foods
