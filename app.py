@@ -14,16 +14,21 @@ app.config["DATABASE"] = os.environ.get("CAMPUS_BITES_DB", str(BASE_DIR / "insta
 PICKUP_TIMES = ["10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM"]
 ORDER_STATUSES = ["Pending", "Preparing", "Ready", "Completed", "Cancelled"]
 FOOD_IMAGES = {
-    "Chicken Biriyani": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw?auto=format&fit=crop&w=800&q=85",
+    "Paneer Wrap": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Masala Dosa": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Classic Veg burger": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Cold Coffee": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Samosa": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Chocolate Brownie": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Chhole Bhature": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Chicken Biriyani": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
     "Egg Biriyani": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=85",
-    "Veg Fried Rice": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=85",
-    "Chicken Roll": "ihttps://unsplash.com/photos/a-white-plate-topped-with-french-fries-and-other-foods-9fUCAqck4Zs?auto=format&fit=crop&w=800&q=85",
-    "Coffee": "https://unsplash.com/photos/selective-focus-photography-of-latte-in-teacup-jn-HaGWe4yw?auto=format&fit=crop&w=800&q=85",
-    "Samosa": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=85",
     "Cutlet": "https://unsplash.com/photos/fried-food-on-blue-and-white-ceramic-bowl-tW1kii3cwdc?auto=format&fit=crop&w=800&q=85",
     "Watermelon juice": "https://unsplash.com/photos/watermelon-shake-4-GFHVfbye0?auto=format&fit=crop&w=800&q=85",
     "Tea": "https://images.unsplash.com/photo-1610478506025-8110cc8f1986?auto=format&fit=crop&w=800&q=85",
     "Meals":"https://unsplash.com/photos/a-plate-of-food-wry_Rw9yzOw?auto=format&fit=crop&w=800&q=85",
+    "Coffee":"https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
+    "Chicken Roll":"https://unsplash.com/photos/a-white-plate-topped-with-french-fries-and-other-foods-9fUCAqck4Zs?auto=format&fit=crop&w=800&q=85",
     "Lime juice":"https://unsplash.com/photos/watermelon-shake-4-GFHVfbye0?auto=format&fit=crop&w=800&q=85"
 
 }
@@ -96,25 +101,34 @@ def init_db():
     category_count = connection.execute("SELECT COUNT(*) FROM CATEGORY").fetchone()[0]
     if category_count == 0:
         categories = [
-            ("Snacks", "Quick, filling favourites for any time."),
+            ("All-day bites", "Quick, filling favourites for any time."),
             ("South Indian", "Fresh from the tawa, made to order."),
             ("Drinks", "A little refresh between lectures."),
+            ("Snacks & sweets", "Delicious treats to satisfy your cravings.")
+
             
         ]
         connection.executemany("INSERT INTO CATEGORY (Category_Name, Description) VALUES (?, ?)", categories)
         category_ids = {row["Category_Name"]: row["Category_ID"] for row in connection.execute("SELECT * FROM CATEGORY")}
         foods = [
+            ("Paneer Wrap", 60, 1, category_ids["South Indian"]),
+            ("Classic Veg burger", 50, 1, category_ids["All-day bites"]),
+            ("Veg Fried Rice", 50, 1, category_ids["South Indian"]),
+            ("Masala Dosa", 40, 1, category_ids["South Indian"]),
+            ("Cold Coffee", 25, 1, category_ids["Drinks"]),
+            ("Samosa", 10, 1, category_ids["Snacks & sweets"]),
+            ("Chocolate Brownie", 40, 1, category_ids["Snacks & sweets"]),
+            ("Chole Bhature", 50, 1, category_ids["South Indian"]),
             ("Chicken Biriyani", 80, 1, category_ids["South Indian"]),
             ("Egg Biriyani", 40, 1, category_ids["South Indian"]),
             ("Veg Fried Rice", 50, 1, category_ids["South Indian"]),
-            ("Chicken Roll", 20, 1, category_ids["Snacks"]),
+            ("Chicken Roll", 20, 1, category_ids["All-day bites"]),
             ("Coffee", 20, 1, category_ids["Drinks"]),
-            ("Samosa", 10, 1, category_ids["Snacks"]),
-            ("Cutlet", 15, 1, category_ids["Snacks"]),
-            ("Watermelon Juice", 25, 1, category_ids["Drinks"]),
+            ("Cutlet", 15, 1, category_ids["Snacks & sweets"]),
+            ("Watermelon juice", 25, 1, category_ids["Drinks"]),
             ("Tea", 15, 1, category_ids["Drinks"]),
             ("Meals", 30, 1, category_ids["South Indian"]),
-            ("Lime Juice", 20, 1, category_ids["Drinks"]),
+            ("Lime juice", 20, 1, category_ids["Drinks"]),
         
             
         

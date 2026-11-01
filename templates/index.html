@@ -12,7 +12,7 @@
   <div class="food-grid" id="food-grid">
     {% for food in foods %}
     <article class="food-card" data-name="{{ food.Food_Name|lower }}" data-category="{{ food.Category_ID }}">
-      <div class="food-photo"><img src="{{ images.get(food.Food_Name, 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=85') }}" alt="{{ food.Food_Name }}" loading="lazy"><span class="food-category">{{ food.Category_Name }}</span>{% if not food.Availability %}<span class="sold-out">Sold out</span>{% endif %}</div>
+      <div class="food-photo"><img src="{{ images.get(food['Food_Name'],'')}}" alt="{{ food['Food_Name'] }}" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=85';"><span class="food-category">{{ food.Category_Name }}</span>{% if not food.Availability %}<span class="sold-out">Sold out</span>{% endif %}</div>
       <div class="food-info"><div><h3>{{ food.Food_Name }}</h3><span class="availability {% if food.Availability %}available{% else %}unavailable{% endif %}">{% if food.Availability %}● Available now{% else %}● Not available{% endif %}</span></div><strong class="food-price">₹{{ '%.0f'|format(food.Price) }}</strong></div>
       <button class="add-button" type="button" data-add="{{ food.Food_ID }}" data-name="{{ food.Food_Name }}" data-price="{{ food.Price }}" {% if not food.Availability %}disabled{% endif %}><span>+</span> Add to order</button>
     </article>
