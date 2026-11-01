@@ -14,14 +14,18 @@ app.config["DATABASE"] = os.environ.get("CAMPUS_BITES_DB", str(BASE_DIR / "insta
 PICKUP_TIMES = ["10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM"]
 ORDER_STATUSES = ["Pending", "Preparing", "Ready", "Completed", "Cancelled"]
 FOOD_IMAGES = {
-    "Paneer Wrap": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=85",
-    "Masala Dosa": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=85",
+    "Chicken Biriyani": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw?auto=format&fit=crop&w=800&q=85",
+    "Egg Biriyani": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=85",
     "Veg Fried Rice": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=85",
-    "Classic Veg Burger": "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=800&q=85",
-    "Cold Coffee": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=85",
-    "Samosa (2 pcs)": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=85",
-    "Chocolate Brownie": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=85",
-    "Chole Kulche": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?auto=format&fit=crop&w=800&q=85",
+    "Chicken Roll": "ihttps://unsplash.com/photos/a-white-plate-topped-with-french-fries-and-other-foods-9fUCAqck4Zs?auto=format&fit=crop&w=800&q=85",
+    "Coffee": "https://unsplash.com/photos/selective-focus-photography-of-latte-in-teacup-jn-HaGWe4yw?auto=format&fit=crop&w=800&q=85",
+    "Samosa": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=85",
+    "Cutlet": "https://unsplash.com/photos/fried-food-on-blue-and-white-ceramic-bowl-tW1kii3cwdc?auto=format&fit=crop&w=800&q=85",
+    "Watermelon juice": "https://unsplash.com/photos/watermelon-shake-4-GFHVfbye0?auto=format&fit=crop&w=800&q=85",
+    "Tea": "https://images.unsplash.com/photo-1610478506025-8110cc8f1986?auto=format&fit=crop&w=800&q=85",
+    "Meals":"https://unsplash.com/photos/a-plate-of-food-wry_Rw9yzOw?auto=format&fit=crop&w=800&q=85",
+    "Lime juice":"https://unsplash.com/photos/watermelon-shake-4-GFHVfbye0?auto=format&fit=crop&w=800&q=85"
+
 }
 
 
@@ -92,22 +96,29 @@ def init_db():
     category_count = connection.execute("SELECT COUNT(*) FROM CATEGORY").fetchone()[0]
     if category_count == 0:
         categories = [
-            ("All-day bites", "Quick, filling favourites for any time."),
+            ("Snacks", "Quick, filling favourites for any time."),
             ("South Indian", "Fresh from the tawa, made to order."),
             ("Drinks", "A little refresh between lectures."),
-            ("Snacks & sweets", "Small treats for a study break."),
+            
         ]
         connection.executemany("INSERT INTO CATEGORY (Category_Name, Description) VALUES (?, ?)", categories)
         category_ids = {row["Category_Name"]: row["Category_ID"] for row in connection.execute("SELECT * FROM CATEGORY")}
         foods = [
-            ("Paneer Wrap", 95, 1, category_ids["All-day bites"]),
-            ("Classic Veg Burger", 85, 1, category_ids["All-day bites"]),
-            ("Veg Fried Rice", 110, 1, category_ids["All-day bites"]),
-            ("Masala Dosa", 75, 1, category_ids["South Indian"]),
-            ("Cold Coffee", 65, 1, category_ids["Drinks"]),
-            ("Samosa (2 pcs)", 30, 1, category_ids["Snacks & sweets"]),
-            ("Chocolate Brownie", 55, 1, category_ids["Snacks & sweets"]),
-            ("Chole Kulche", 90, 1, category_ids["All-day bites"]),
+            ("Chicken Biriyani", 80, 1, category_ids["South Indian"]),
+            ("Egg Biriyani", 40, 1, category_ids["South Indian"]),
+            ("Veg Fried Rice", 50, 1, category_ids["South Indian"]),
+            ("Chicken Roll", 20, 1, category_ids["Snacks"]),
+            ("Coffee", 20, 1, category_ids["Drinks"]),
+            ("Samosa", 10, 1, category_ids["Snacks"]),
+            ("Cutlet", 15, 1, category_ids["Snacks"]),
+            ("Watermelon Juice", 25, 1, category_ids["Drinks"]),
+            ("Tea", 15, 1, category_ids["Drinks"]),
+            ("Meals", 30, 1, category_ids["South Indian"]),
+            ("Lime Juice", 20, 1, category_ids["Drinks"]),
+        
+            
+        
+
         ]
         connection.executemany(
             "INSERT INTO FOOD_ITEM (Food_Name, Price, Availability, Category_ID) VALUES (?, ?, ?, ?)", foods
@@ -346,3 +357,4 @@ def init_db_command():
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
+    
