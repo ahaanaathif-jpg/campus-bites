@@ -26,16 +26,16 @@ DEFAULT_MENU_ITEMS = [
     ("Watermelon Juice", 25, "Drinks"),
 ]
 FOOD_IMAGES = {
-    "Chicken Biriyani": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80",
-    "Egg Biriyani": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80",
-    "Meals": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
-    "Samosa": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
-    "Chicken Roll": "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80",
-    "Cutlet": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
-    "Coffee": "https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=800&q=80",
-    "Tea": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=800&q=80",
-    "Lime Juice": "https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80",
-    "Watermelon Juice": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=800&q=80",
+    "Chicken Biriyani": "/static/images/chicken-biriyani.jpg",
+    "Egg Biriyani": "/static/images/egg-biriyani.jpg",
+    "Meals": "/static/images/meals.jpg",
+    "Samosa": "/static/images/samosa.jpg",
+    "Chicken Roll": "/static/images/chicken-roll.jpg",
+    "Cutlet": "/static/images/cutlet.jpg",
+    "Tea": "/static/images/tea.jpg",
+    "Coffee": "/static/images/coffee.jpg",
+    "Lime Juice": "/static/images/lime-juice.jpg",
+    "Watermelon Juice": "/static/images/watermelon-juice.jpg",
 }
 
 
