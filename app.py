@@ -14,23 +14,19 @@ app.config["DATABASE"] = os.environ.get("CAMPUS_BITES_DB", str(BASE_DIR / "insta
 PICKUP_TIMES = ["10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM"]
 ORDER_STATUSES = ["Pending", "Preparing", "Ready", "Completed", "Cancelled"]
 FOOD_IMAGES = {
-    "Paneer Wrap": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Masala Dosa": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Classic Veg burger": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Cold Coffee": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Samosa": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Chocolate Brownie": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Chhole Bhature": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Chicken Biriyani": "https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Egg Biriyani": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=85",
-    "Cutlet": "https://unsplash.com/photos/fried-food-on-blue-and-white-ceramic-bowl-tW1kii3cwdc?auto=format&fit=crop&w=800&q=85",
-    "Watermelon juice": "https://unsplash.com/photos/watermelon-shake-4-GFHVfbye0?auto=format&fit=crop&w=800&q=85",
-    "Tea": "https://images.unsplash.com/photo-1610478506025-8110cc8f1986?auto=format&fit=crop&w=800&q=85",
-    "Meals":"https://unsplash.com/photos/a-plate-of-food-wry_Rw9yzOw?auto=format&fit=crop&w=800&q=85",
-    "Coffee":"https://unsplash.com/photos/a-white-bowl-filled-with-rice-and-meat-ysmeQt1dzcw",
-    "Chicken Roll":"https://unsplash.com/photos/a-white-plate-topped-with-french-fries-and-other-foods-9fUCAqck4Zs?auto=format&fit=crop&w=800&q=85",
-    "Lime juice":"https://unsplash.com/photos/watermelon-shake-4-GFHVfbye0?auto=format&fit=crop&w=800&q=85"
-
+    "Veg Sandwich": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80",
+    "Chicken Sandwich": "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?auto=format&fit=crop&w=800&q=80",
+    "Cheese Toast": "https://images.unsplash.com/photo-1505253716362-afaea1a3d3af?auto=format&fit=crop&w=800&q=80",
+    "Masala Dosa": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80",
+    "Idli Sambar": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80",
+    "Mini Tiffin Combo": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
+    "Cold Coffee": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80",
+    "Mango Shake": "https://images.unsplash.com/photo-1577805947697-89e18249e767?auto=format&fit=crop&w=800&q=80",
+    "Fresh Lime Soda": "https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80",
+    "French Fries": "https://images.unsplash.com/photo-1576101671253-6c3d6bdf2879?auto=format&fit=crop&w=800&q=80",
+    "Nachos": "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=800&q=80",
+    "Chocolate Brownie": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "Gulab Jamun": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
 }
 
 
@@ -105,34 +101,23 @@ def init_db():
             ("South Indian", "Fresh from the tawa, made to order."),
             ("Drinks", "A little refresh between lectures."),
             ("Snacks & sweets", "Delicious treats to satisfy your cravings.")
-
-            
         ]
         connection.executemany("INSERT INTO CATEGORY (Category_Name, Description) VALUES (?, ?)", categories)
         category_ids = {row["Category_Name"]: row["Category_ID"] for row in connection.execute("SELECT * FROM CATEGORY")}
         foods = [
-            ("Paneer Wrap", 60, 1, category_ids["South Indian"]),
-            ("Classic Veg burger", 50, 1, category_ids["All-day bites"]),
-            ("Veg Fried Rice", 50, 1, category_ids["South Indian"]),
-            ("Masala Dosa", 40, 1, category_ids["South Indian"]),
-            ("Cold Coffee", 25, 1, category_ids["Drinks"]),
-            ("Samosa", 10, 1, category_ids["Snacks & sweets"]),
-            ("Chocolate Brownie", 40, 1, category_ids["Snacks & sweets"]),
-            ("Chole Bhature", 50, 1, category_ids["South Indian"]),
-            ("Chicken Biriyani", 80, 1, category_ids["South Indian"]),
-            ("Egg Biriyani", 40, 1, category_ids["South Indian"]),
-            ("Veg Fried Rice", 50, 1, category_ids["South Indian"]),
-            ("Chicken Roll", 20, 1, category_ids["All-day bites"]),
-            ("Coffee", 20, 1, category_ids["Drinks"]),
-            ("Cutlet", 15, 1, category_ids["Snacks & sweets"]),
-            ("Watermelon juice", 25, 1, category_ids["Drinks"]),
-            ("Tea", 15, 1, category_ids["Drinks"]),
-            ("Meals", 30, 1, category_ids["South Indian"]),
-            ("Lime juice", 20, 1, category_ids["Drinks"]),
-        
-            
-        
-
+            ("Veg Sandwich", 60, 1, category_ids["All-day bites"]),
+            ("Chicken Sandwich", 80, 1, category_ids["All-day bites"]),
+            ("Cheese Toast", 70, 1, category_ids["All-day bites"]),
+            ("Masala Dosa", 45, 1, category_ids["South Indian"]),
+            ("Idli Sambar", 35, 1, category_ids["South Indian"]),
+            ("Mini Tiffin Combo", 90, 1, category_ids["South Indian"]),
+            ("Cold Coffee", 40, 1, category_ids["Drinks"]),
+            ("Mango Shake", 60, 1, category_ids["Drinks"]),
+            ("Fresh Lime Soda", 35, 1, category_ids["Drinks"]),
+            ("French Fries", 55, 1, category_ids["Snacks & sweets"]),
+            ("Nachos", 75, 1, category_ids["Snacks & sweets"]),
+            ("Chocolate Brownie", 50, 1, category_ids["Snacks & sweets"]),
+            ("Gulab Jamun", 30, 1, category_ids["Snacks & sweets"]),
         ]
         connection.executemany(
             "INSERT INTO FOOD_ITEM (Food_Name, Price, Availability, Category_ID) VALUES (?, ?, ?, ?)", foods
@@ -371,4 +356,3 @@ def init_db_command():
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
-    
